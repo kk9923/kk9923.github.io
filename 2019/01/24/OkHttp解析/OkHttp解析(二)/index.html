@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="Dispatcher 类详解Dispatcher负责请求的分发 1、线程池executeService 123456789/** Executes calls. Created lazily. */private ExecutorService executorService;public synchronized ExecutorService executorService() &amp;#123;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OkHttp解析(二)--Dispatcher 类详解">
+<meta property="og:url" content="http://yoursite.com/2019/01/24/OkHttp解析/OkHttp解析(二)/index.html">
+<meta property="og:site_name" content="Android">
+<meta property="og:description" content="Dispatcher 类详解Dispatcher负责请求的分发 1、线程池executeService 123456789/** Executes calls. Created lazily. */private ExecutorService executorService;public synchronized ExecutorService executorService() &amp;#123;">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-01-24T14:43:50.169Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OkHttp解析(二)--Dispatcher 类详解">
+<meta name="twitter:description" content="Dispatcher 类详解Dispatcher负责请求的分发 1、线程池executeService 123456789/** Executes calls. Created lazily. */private ExecutorService executorService;public synchronized ExecutorService executorService() &amp;#123;">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/24/OkHttp解析/OkHttp解析(二)/">
+
+
+
+
+
+  <title>OkHttp解析(二)--Dispatcher 类详解 | Android</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Android</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-android">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            安卓
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/24/OkHttp解析/OkHttp解析(二)/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Xia Kai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://www.jituwang.com/uploads/allimg/151003/258203-1510030RP894.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Android">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OkHttp解析(二)--Dispatcher 类详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-24T22:35:06+08:00">
+                2019-01-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/OkHttp解析/" itemprop="url" rel="index">
+                    <span itemprop="name">OkHttp解析</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/01/24/OkHttp解析/OkHttp解析(二)/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/01/24/OkHttp解析/OkHttp解析(二)/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Dispatcher-类详解"><a href="#Dispatcher-类详解" class="headerlink" title="Dispatcher 类详解"></a>Dispatcher 类详解</h2><p>Dispatcher负责请求的分发</p>
+<p><strong>1、线程池executeService</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Executes calls. Created lazily. */</span></span><br><span class="line"><span class="keyword">private</span> ExecutorService executorService;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> ExecutorService <span class="title">executorService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   <span class="keyword">if</span> (executorService == <span class="keyword">null</span>) &#123;</span><br><span class="line">     executorService = <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, Integer.MAX_VALUE, <span class="number">60</span>, TimeUnit.SECONDS, <span class="keyword">new</span> SynchronousQueue&lt;Runnable&gt;(), Util.threadFactory(<span class="string">"OkHttp Dispatcher"</span>, <span class="keyword">false</span>));</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> executorService;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>Dispatcher内部实现了懒加载的无边界限制的线程池;参数解析</p>
+<ul>
+<li>1、0：核心线程数量，保持在线程池中的线程数量(即使已经空闲)，为0代表线程空闲后不会保留，等待一段时间后停止。</li>
+<li>2、Integer.MAX_VALUE:表示线程池可以容纳最大线程数量</li>
+<li>3、TimeUnit.SECOND:当线程池中的线程数量大于核心线程时，空闲的线程就会等待60s才会被终止，如果小于，则会立刻停止。</li>
+<li>4、new SynchronousQueue<runnable>()：线程等待队列。同步队列，按序排队，先来先服务</runnable></li>
+<li>5、Util.threadFactory(“OkHttp Dispatcher”, false):线程工厂，直接创建一个名为OkHttp Dispatcher的非守护线程。</li>
+</ul>
+<p>(1)SynchronousQueue每个插入操作必须等待另一个线程的移除操作，同样任何一个移除操作都等待另一个线程的插入操作。因此队列内部其实没有任何一个元素，或者说容量为0，严格说并不是一种容器，由于队列没有容量，因此不能调用peek等操作，因此只有移除元素才有元素，显然这是一种快速传递元素的方式，也就是说在这种情况下元素总是以最快的方式从插入者(生产者)传递给移除者(消费者),这在多任务队列中最快的处理任务方式。对于高频请求场景，无疑是最合适的。</p>
+<p>(2)在OKHttp中，创建了一个阀值是Integer.MAX_VALUE的线程池，它不保留任何最小线程，随时创建更多的线程数，而且如果线程空闲后，只能多活60秒。所以也就说如果收到20个并发请求，线程池会创建20个线程，当完成后的60秒后会自动关闭所有20个线程。他这样设计成不设上限的线程，以保证I/O任务中高阻塞低占用的过程，不会长时间卡在阻塞上。</p>
+<p><strong>2、发起请求</strong></p>
+<p>整个框架主要通过Call来封装每一次的请求。同时Call持有OkHttpClient和一份Request。而每一次的同步或者异步请求都会有Dispatcher的参与。</p>
+<p><strong>(1)、同步</strong></p>
+<p><strong>第一步是：是调用了RealCall的execute()方法里面调用executed(this);</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  RealCall方法</span></span><br><span class="line"><span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> Response <span class="title">execute</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="comment">// 代码省略</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      client.dispatcher().executed(<span class="keyword">this</span>);</span><br><span class="line">      Response result = getResponseWithInterceptorChain();</span><br><span class="line">     <span class="comment">// 代码省略</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">    <span class="comment">// 代码省略</span></span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      client.dispatcher().finished(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>第二步：在Dispatcher里面的executed执行入队操作</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  Dispatcher方法</span></span><br><span class="line">  <span class="comment">/** Used by &#123;<span class="doctag">@code</span> Call#execute&#125; to signal it is in-flight. */</span></span><br><span class="line">  <span class="function"><span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">executed</span><span class="params">(RealCall call)</span> </span>&#123;</span><br><span class="line">    runningSyncCalls.add(call);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p><strong>第三步：执行getResponseWithInterceptorChain();进入拦截器链流程，然后进行请求，获取Response，并返回Response result 。</strong></p>
+<p><strong>第四步：执行client.dispatcher().finished(this)操作</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Used by &#123;<span class="doctag">@code</span> Call#execute&#125; to signal completion. */</span></span><br><span class="line"> <span class="function"><span class="keyword">void</span> <span class="title">finished</span><span class="params">(RealCall call)</span> </span>&#123;</span><br><span class="line">   finished(runningSyncCalls, call);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>这里其实做的是出队操作。至此同步的调度就已经结束了</p>
+<p><strong>(2)、异步</strong></p>
+<p><strong>第一步 是调用了RealCall的enqueue()方法</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  RealCall方法</span></span><br><span class="line"> <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">enqueue</span><span class="params">(Callback responseCallback)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">      <span class="keyword">if</span> (executed) <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Already Executed"</span>);</span><br><span class="line">      executed = <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    captureCallStackTrace();</span><br><span class="line">    eventListener.callStart(<span class="keyword">this</span>);</span><br><span class="line">    client.dispatcher().enqueue(<span class="keyword">new</span> AsyncCall(responseCallback));</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p><strong>第二步：在Dispatcher里面的enqueue执行入队操作</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  Dispatcher方法</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">enqueue</span><span class="params">(AsyncCall call)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">          readyAsyncCalls.add(call);</span><br><span class="line">        &#125;</span><br><span class="line">        promoteAndExecute();</span><br><span class="line">      &#125;</span><br><span class="line">  </span><br><span class="line">   <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">promoteAndExecute</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">assert</span> (!Thread.holdsLock(<span class="keyword">this</span>));</span><br><span class="line"></span><br><span class="line">    List&lt;AsyncCall&gt; executableCalls = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">boolean</span> isRunning;</span><br><span class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">      <span class="keyword">for</span> (Iterator&lt;AsyncCall&gt; i = readyAsyncCalls.iterator(); i.hasNext(); ) &#123;</span><br><span class="line">        AsyncCall asyncCall = i.next();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (runningAsyncCalls.size() &gt;= maxRequests) <span class="keyword">break</span>; <span class="comment">// Max capacity.</span></span><br><span class="line">        <span class="keyword">if</span> (runningCallsForHost(asyncCall) &gt;= maxRequestsPerHost) <span class="keyword">continue</span>; <span class="comment">// Host max capacity.</span></span><br><span class="line"></span><br><span class="line">        i.remove();</span><br><span class="line">        executableCalls.add(asyncCall);</span><br><span class="line">        runningAsyncCalls.add(asyncCall);</span><br><span class="line">      &#125;</span><br><span class="line">      isRunning = runningCallsCount() &gt; <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>, size = executableCalls.size(); i &lt; size; i++) &#123;</span><br><span class="line">      AsyncCall asyncCall = executableCalls.get(i);</span><br><span class="line">      asyncCall.executeOn(executorService());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> isRunning;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p>runningAsyncCalls.size() &lt; maxRequests  表示当前正在运行的AsyncCall是否小于maxRequests = 64<br>runningCallsForHost(call) &lt; maxRequestsPerHos 表示同一个地址访问的AsyncCall是否小于maxRequestsPerHost = 5;<br>即 当前正在并发的请求不能超过64且同一个地址的访问不能超过5个</p>
+<p><strong>将Call加入readyAsyncCalls等待队列：如果当前正在执行的call的数量大于maxRequest(64),或者该call的Host上的call超过maxRequestsPerHos(5),则继续等待，否则①加入runningAsyncCalls ②通过迭代器,从readyAsyncCalls删除③执行AsyncCall的executeOn方法.</strong></p>
+<p>AsyncCall的executeOn最终会执行execute()方法。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">@Override protected void execute() &#123;</span><br><span class="line">      boolean signalledCallback = false;</span><br><span class="line">      try &#123;</span><br><span class="line">        Response response = getResponseWithInterceptorChain();</span><br><span class="line">        if (retryAndFollowUpInterceptor.isCanceled()) &#123;</span><br><span class="line">          signalledCallback = true;</span><br><span class="line">          responseCallback.onFailure(RealCall.this, new IOException(&quot;Canceled&quot;));</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">          signalledCallback = true;</span><br><span class="line">          responseCallback.onResponse(RealCall.this, response);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125; catch (IOException e) &#123;</span><br><span class="line">        if (signalledCallback) &#123;</span><br><span class="line">         </span><br><span class="line">        &#125; else &#123;</span><br><span class="line">        </span><br><span class="line">          responseCallback.onFailure(RealCall.this, e);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125; finally &#123;</span><br><span class="line">        client.dispatcher().finished(this);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>第三步：执行getResponseWithInterceptorChain();进入拦截器链流程，然后进行请求，获取Response。</strong></p>
+<p><strong>第四步：如果是正常的获取到Response，则执行responseCallback.onResponse()</strong></p>
+<p><strong>第五步：执行client.dispatcher().finished(this)操作 进行出队操作</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Used by &#123;<span class="doctag">@code</span> AsyncCall#run&#125; to signal completion. */</span></span><br><span class="line"> <span class="function"><span class="keyword">void</span> <span class="title">finished</span><span class="params">(AsyncCall call)</span> </span>&#123;</span><br><span class="line">   finished(runningAsyncCalls, call);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>Dispatcher的finished方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> &lt;T&gt; <span class="function"><span class="keyword">void</span> <span class="title">finished</span><span class="params">(Deque&lt;T&gt; calls, T call)</span> </span>&#123;</span><br><span class="line">    Runnable idleCallback;</span><br><span class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">      <span class="keyword">if</span> (!calls.remove(call)) <span class="keyword">throw</span> <span class="keyword">new</span> AssertionError(<span class="string">"Call wasn't in-flight!"</span>);</span><br><span class="line">      idleCallback = <span class="keyword">this</span>.idleCallback;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">boolean</span> isRunning = promoteAndExecute();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!isRunning &amp;&amp; idleCallback != <span class="keyword">null</span>) &#123;</span><br><span class="line">      idleCallback.run();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p> 如果无法将任务从队列中移除，则会抛出异常.之后会 <strong>调用promoteAndExecute()</strong> 方法.<strong>对readyAsyncCalls和runningAsyncCalls操作</strong>,执行下一个任务。</p>
+<h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><ul>
+<li>1、异步流程总结<br>所以简单的描述下异步调度为：直接加入readyAsyncCalls队列，会调用promoteAndExecute()，来把readyAsyncCalls队列中的Async移出来并加入到runningAsyncCalls，并开始执行。然后在当前线程中去执行Call的getResponseWithInterceptorChain（）方法，直接获取当前的返回数据Response</li>
+</ul>
+<ul>
+<li>2、对比同步和异步任务，我们会发现:同步请求和异步请求原理都是一样的，都是在getResponseWithInterceptorChain()函数通过Interceptor链条来实现网络请求逻辑，而异步任务则通过ExecutorService来实现的。PS:在Dispatcher中添加一个封装了Callback的Call的匿名内部类AsyncCall来执行当前的Call。这个AsyncCall是Call的匿名内部类。AsyncCall的execute方法仍然会回调到Call的getResponseWithInterceptorChain方法来完成请求,同时将返回数据或者状态通过Callback来完成。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="Xia Kai wechat" style="width: 200px; max-width: 100%;">
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客！</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/24/OkHttp解析/OkHttp解析(一)/" rel="next" title="OkHttp解析(一)--整体流程分析">
+                <i class="fa fa-chevron-left"></i> OkHttp解析(一)--整体流程分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="http://www.jituwang.com/uploads/allimg/151003/258203-1510030RP894.jpg" alt="Xia Kai">
+          <p class="site-author-name" itemprop="name">Xia Kai</p>
+           
+              <p class="site-description motion-element" itemprop="description">个人Bolg记录</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/" target="_blank" title="Google">
+                  
+                    <i class="fa fa-fw fa-google"></i>
+                  
+                    
+                      Google
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/" target="_blank" title="Mail">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                    
+                      Mail
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Dispatcher-类详解"><span class="nav-number">1.</span> <span class="nav-text">Dispatcher 类详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#总结："><span class="nav-number">1.1.</span> <span class="nav-text">总结：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy;  2018 - 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Xia Kai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://xiakai.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com/2019/01/24/OkHttp解析/OkHttp解析(二)/';
+          this.page.identifier = '2019/01/24/OkHttp解析/OkHttp解析(二)/';
+          this.page.title = 'OkHttp解析(二)--Dispatcher 类详解';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://xiakai.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  <script type="text/javascript" src="/js/src/js.cookie.js?v=5.1.2"></script>
+  <script type="text/javascript" src="/js/src/scroll-cookie.js?v=5.1.2"></script>
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+
+ <!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+
+</html>
+
+ 
