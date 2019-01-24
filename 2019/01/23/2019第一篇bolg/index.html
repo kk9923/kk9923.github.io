@@ -94,17 +94,17 @@
 
 
 
-<meta name="description" content="个人Bolg记录">
+<meta name="description" content="12345678910111213141516171819202122232425262728293031323334public class AnnotationTest &amp;#123;    public static void main(String [] args)&amp;#123;        if ( Test.class.isAnnotationPresent(ClassAnnotatio">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2019第一篇bolg">
+<meta property="og:title" content="Java基础--注解">
 <meta property="og:url" content="http://yoursite.com/2019/01/23/2019第一篇bolg/index.html">
 <meta property="og:site_name" content="Android">
-<meta property="og:description" content="个人Bolg记录">
+<meta property="og:description" content="12345678910111213141516171819202122232425262728293031323334public class AnnotationTest &amp;#123;    public static void main(String [] args)&amp;#123;        if ( Test.class.isAnnotationPresent(ClassAnnotatio">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-01-23T14:06:57.947Z">
+<meta property="og:updated_time" content="2019-01-24T12:53:31.292Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="2019第一篇bolg">
-<meta name="twitter:description" content="个人Bolg记录">
+<meta name="twitter:title" content="Java基础--注解">
+<meta name="twitter:description" content="12345678910111213141516171819202122232425262728293031323334public class AnnotationTest &amp;#123;    public static void main(String [] args)&amp;#123;        if ( Test.class.isAnnotationPresent(ClassAnnotatio">
 
 
 
@@ -113,7 +113,7 @@
   var CONFIG = {
     root: '/',
     scheme: 'Gemini',
-    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":true,"scrollpercent":true,"onmobile":false},
     fancybox: true,
     tabs: true,
     motion: true,
@@ -139,7 +139,7 @@
 
 
 
-  <title>2019第一篇bolg | Android</title>
+  <title>Java基础--注解 | Android</title>
   
 
 
@@ -220,6 +220,16 @@
         </li>
       
         
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
             
@@ -289,7 +299,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">2019第一篇bolg</h1>
+          <h1 class="post-title" itemprop="name headline">Java基础--注解</h1>
         
 
         <div class="post-meta">
@@ -312,8 +322,40 @@
           </span>
 
           
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/01/23/2019第一篇bolg/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/01/23/2019第一篇bolg/" itemprop="commentCount"></span>
+                </a>
+              </span>
             
           
 
@@ -339,13 +381,21 @@
       
 
       
-        
+        <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AnnotationTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String [] args)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ( Test.class.isAnnotationPresent(ClassAnnotation.class) ) &#123;</span><br><span class="line">            ClassAnnotation testAnnotation = Test.class.getAnnotation(ClassAnnotation.class);</span><br><span class="line">            <span class="comment">//获取类的注解</span></span><br><span class="line">            System.out.println(<span class="string">"获取类的注解  value:"</span>+testAnnotation.value());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Field field = Test.class.getDeclaredField(<span class="string">"name"</span>);</span><br><span class="line">            field.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">            <span class="keyword">if</span> (field.isAnnotationPresent(FieldAnnotation.class)) &#123;</span><br><span class="line">                FieldAnnotation fieldAnnotation = field.getAnnotation(FieldAnnotation.class);</span><br><span class="line">                <span class="comment">//获取类的注解</span></span><br><span class="line">                System.out.println(<span class="string">"获取字段的注解  value:"</span>+fieldAnnotation.value());</span><br><span class="line">            &#125;</span><br><span class="line">&lt;!-- more --&gt;</span><br><span class="line">            Method method = Test.class.getMethod(<span class="string">"test"</span>);</span><br><span class="line">            <span class="keyword">if</span> (method.isAnnotationPresent(MethodAnnotation.class)) &#123;</span><br><span class="line">                MethodAnnotation methodAnnotation = method.getAnnotation(MethodAnnotation.class);</span><br><span class="line">                <span class="comment">//获取类的注解</span></span><br><span class="line">                System.out.println(<span class="string">"获取方法的注解  value:"</span>+methodAnnotation.value());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 获取多个方法的注解</span></span><br><span class="line">            Annotation[] annotations = method.getAnnotations();</span><br><span class="line">            <span class="keyword">for</span>( <span class="keyword">int</span> i = <span class="number">0</span>;i &lt; annotations.length;i++) &#123;</span><br><span class="line">                System.out.println(<span class="string">"method annotation:     "</span>+annotations[i].annotationType().getSimpleName());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NoSuchMethodException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;<span class="keyword">catch</span> (NoSuchFieldException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
     </div>
     
     
     
 
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qcode.jpg" alt="Xia Kai wechat" style="width: 200px; max-width: 100%;">
+    <div>欢迎您扫一扫上面的微信公众号，订阅我的博客！</div>
+</div>
+
+      </div>
     
 
     
@@ -401,6 +451,13 @@
           
   <div class="comments" id="comments">
     
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
   </div>
 
 
@@ -444,6 +501,15 @@
           
 
           
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
 
           
 
@@ -453,12 +519,72 @@
 
         <div class="links-of-author motion-element">
           
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/" target="_blank" title="Google">
+                  
+                    <i class="fa fa-fw fa-google"></i>
+                  
+                    
+                      Google
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      Weibo
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/" target="_blank" title="Mail">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                    
+                      Mail
+                    
+                </a>
+              </span>
+            
+          
         </div>
 
         
         
 
         
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/" title="GitHub" target="_blank">GitHub</a>
+                </li>
+              
+            </ul>
+          </div>
         
 
         
@@ -468,6 +594,13 @@
 
       
 
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
       
 
     </div>
@@ -482,7 +615,7 @@
       <div class="footer-inner">
         <div class="copyright">
   
-  &copy; 
+  &copy;  2018 - 
   <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
@@ -510,11 +643,6 @@
     </footer>
 
     
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-        
-      </div>
-    
 
   </div>
 
@@ -536,6 +664,8 @@
 
   
 
+
+  
 
 
 
@@ -564,6 +694,9 @@
 
   
   <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
 
 
   
@@ -603,6 +736,26 @@
 
   
 
+    
+      <script id="dsq-count-scr" src="https://xiakai.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com/2019/01/23/2019第一篇bolg/';
+          this.page.identifier = '2019/01/23/2019第一篇bolg/';
+          this.page.title = 'Java基础--注解';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://xiakai.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
 
 
 
@@ -618,10 +771,6 @@
 
 
 
-  
-
-
-
 
 
 
@@ -640,8 +789,19 @@
   
 
   
+  <script type="text/javascript" src="/js/src/js.cookie.js?v=5.1.2"></script>
+  <script type="text/javascript" src="/js/src/scroll-cookie.js?v=5.1.2"></script>
+
 
   
 
-</body>
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+
+ <!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+
 </html>
+
+ 
